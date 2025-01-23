@@ -1,48 +1,64 @@
-//
-//  RecipeListView.swift
-//  FetchRecipes
-//
-//  Created by Isaac Farr on 1/23/25.
-//
-
 import SwiftUI
 
 struct RecipeListView: View {
     @StateObject private var viewModel = RecipeViewModel()
+    @State private var searchText = ""
+    @State private var isSearchBarVisible = false
+    @State private var isSortScreenPresented = false
     private let imageCache = ImageCache()
 
     var body: some View {
         NavigationView {
-            List(viewModel.recipes) { recipe in
-                HStack {
-                    AsyncImage(url: recipe.photoURLSmall) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .cornerRadius(8)
-                        case .failure:
-                            Color.gray
-                                .frame(width: 50, height: 50)
-                                .cornerRadius(8)
-                        default:
-                            ProgressView()
-                                .frame(width: 50, height: 50)
+            VStack {
+                // Conditional Search Bar
+                if isSearchBarVisible {
+                    TextField("Search recipes by name", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                        .onChange(of: searchText) { _, newValue in
+                            viewModel.filterRecipes(by: newValue)
                         }
-                    }
+                        .onSubmit {
+                            isSearchBarVisible = false // Hide search bar when user finishes entering text
+                        }
+                }
 
-                    VStack(alignment: .leading) {
-                        Text(recipe.name)
-                            .font(.headline)
-                        Text(recipe.cuisine)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
+                // Recipe List
+                List(viewModel.filteredRecipes) { recipe in
+                    RecipeListItem(recipe: recipe)
                 }
             }
             .navigationTitle("Recipes")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        withAnimation {
+                            isSearchBarVisible.toggle() // Toggle visibility
+                            if !isSearchBarVisible {
+                                searchText = "" // Clear search text when hiding the bar
+                                viewModel.filterRecipes(by: searchText) // Reset the filtered list
+                            }
+                        }
+                    }) {
+                        Image(systemName: isSearchBarVisible ? "xmark.circle.fill" : "magnifyingglass")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        isSortScreenPresented = true // Show the sort screen
+                    }) {
+                        Image(systemName: "arrow.up.arrow.down.circle")
+                    }
+                }
+            }
+            .sheet(isPresented: $isSortScreenPresented) {
+                SortOptionsView(
+                    currentSortOption: viewModel.currentSortOption, // Pass current sort option
+                    onSortSelected: { sortOption in
+                        viewModel.sortRecipes(by: sortOption)
+                    }
+                )
+            }
             .refreshable {
                 await viewModel.fetchRecipes()
             }
