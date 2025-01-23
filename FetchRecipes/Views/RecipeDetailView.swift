@@ -6,7 +6,7 @@ struct RecipeDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .center, spacing: 16) {
                 // Recipe Image
                 if let photoURLLarge = recipe.photoURLLarge {
                     AsyncImage(url: photoURLLarge) { phase in
@@ -23,11 +23,6 @@ struct RecipeDetailView: View {
                     }
                     .frame(height: 200)
                 }
-
-                // Recipe Name
-                Text(recipe.name)
-                    .font(.title)
-                    .bold()
 
                 // Cuisine Type
                 Text("Cuisine: \(recipe.cuisine)")

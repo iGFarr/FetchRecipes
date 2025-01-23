@@ -1,3 +1,10 @@
+//
+//  RecipeListView.swift
+//  FetchRecipes
+//
+//  Created by Isaac Farr on 1/23/25.
+//
+
 import SwiftUI
 
 struct RecipeListView: View {
@@ -5,44 +12,16 @@ struct RecipeListView: View {
     @State private var searchText = ""
     @State private var isSearchBarVisible = false
     @State private var isSortScreenPresented = false
+    @FocusState private var isSearchFieldFocused: Bool
     private let imageCache = ImageCache()
 
     var body: some View {
         NavigationView {
-            VStack {
-                // Conditional Search Bar
-                if isSearchBarVisible {
-                    TextField("Search recipes by name", text: $searchText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal)
-                        .onChange(of: searchText) { _, newValue in
-                            viewModel.filterRecipes(by: newValue)
-                        }
-                        .onSubmit {
-                            isSearchBarVisible = false // Hide search bar when user finishes entering text
-                        }
-                }
-
-                // Recipe List
-                List(viewModel.filteredRecipes) { recipe in
-                    RecipeListItem(recipe: recipe)
-                }
+            List(viewModel.filteredRecipes) { recipe in
+                RecipeListItem(recipe: recipe)
             }
-            .navigationTitle("Recipes")
+            .navigationTitle("Fetch: Recipes")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        withAnimation {
-                            isSearchBarVisible.toggle() // Toggle visibility
-                            if !isSearchBarVisible {
-                                searchText = "" // Clear search text when hiding the bar
-                                viewModel.filterRecipes(by: searchText) // Reset the filtered list
-                            }
-                        }
-                    }) {
-                        Image(systemName: isSearchBarVisible ? "xmark.circle.fill" : "magnifyingglass")
-                    }
-                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         isSortScreenPresented = true // Show the sort screen
@@ -50,10 +29,40 @@ struct RecipeListView: View {
                         Image(systemName: "arrow.up.arrow.down.circle")
                     }
                 }
+                ToolbarItem(placement: .principal) {
+                    if isSearchBarVisible {
+                        TextField("Search recipes", text: $searchText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .focused($isSearchFieldFocused) // Bind focus state
+                            .onChange(of: searchText) { _, newValue in
+                                viewModel.filterRecipes(by: newValue)
+                            }
+                            .onSubmit {
+                                isSearchBarVisible = false
+                            }
+                            .frame(maxWidth: .infinity) // Take up maximum space
+                            .padding(.horizontal, 8) // Add padding
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        withAnimation {
+                            isSearchBarVisible.toggle()
+                            if isSearchBarVisible {
+                                isSearchFieldFocused = true // Focus on the text field
+                            } else {
+                                searchText = ""
+                                viewModel.filterRecipes(by: searchText)
+                            }
+                        }
+                    }) {
+                        Image(systemName: isSearchBarVisible ? "xmark.circle.fill" : "magnifyingglass")
+                    }
+                }
             }
             .sheet(isPresented: $isSortScreenPresented) {
                 SortOptionsView(
-                    currentSortOption: viewModel.currentSortOption, // Pass current sort option
+                    currentSortOption: viewModel.currentSortOption,
                     onSortSelected: { sortOption in
                         viewModel.sortRecipes(by: sortOption)
                     }
