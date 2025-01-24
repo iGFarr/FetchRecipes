@@ -13,11 +13,23 @@ struct RecipeListView: View {
     @State private var isSearchBarVisible = false
     @State private var isSortScreenPresented = false
     @FocusState private var isSearchFieldFocused: Bool
-
+    
     var body: some View {
         NavigationView {
-            List(viewModel.filteredRecipes) { recipe in
-                RecipeListItem(recipe: recipe)
+            VStack {
+                if viewModel.filteredRecipes.isEmpty {
+                    // Used a list here to retain pull-to-refresh ability. Text for empty data set.
+                    List(["No recipes found."], id: \.self) { text in
+                        Text(text)
+                            .font(.headline)
+                            .listRowBackground(Color(.clear))
+                    }
+                } else {
+                    // Show the recipe list when there are recipes
+                    List(viewModel.filteredRecipes) { recipe in
+                        RecipeListItem(recipe: recipe)
+                    }
+                }
             }
             .navigationTitle("Fetch: Recipes")
             .toolbar {
@@ -33,7 +45,7 @@ struct RecipeListView: View {
                         TextField("Search recipes", text: $searchText)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .focused($isSearchFieldFocused)
-                            .onChange(of: searchText) { _, newValue in
+                            .onChange(of: searchText) { newValue in
                                 viewModel.filterRecipes(by: newValue)
                             }
                             .onSubmit {
@@ -77,5 +89,6 @@ struct RecipeListView: View {
                 Alert(title: Text("Error"), message: Text(error.value), dismissButton: .default(Text("OK")))
             }
         }
+        
     }
 }

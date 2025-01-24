@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RecipeListItem: View {
     private let recipe: Recipe
-    private let imageCache = ImageCache()
+    private let imageCache = ImageCache.shared
     @State private var cachedImage: UIImage?
 
     init(recipe: Recipe) {
