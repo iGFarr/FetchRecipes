@@ -3,7 +3,6 @@
   <img src="./images/TakeHomeSS1.png" width="200" />
   <img src="./images/TakeHomeSS2.png" width="200" /> 
 </p>
-<hr size="5">
 <p float="left">
   <img src="./images/TakeHomeSS3.png" width="200" />
   <img src="./images/TakeHomeSS4.png" width="200" /> 
