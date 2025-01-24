@@ -1,3 +1,11 @@
+//
+//  RecipeViewModel.swift
+//  FetchRecipes
+//
+//  Created by Isaac Farr on 1/23/25.
+//
+
+
 import Foundation
 
 struct IdentifiableString: Identifiable {
@@ -10,7 +18,7 @@ class RecipeViewModel: ObservableObject {
     @Published var recipes: [Recipe] = []
     @Published var filteredRecipes: [Recipe] = []
     @Published var errorMessage: IdentifiableString? = nil
-    @Published var currentSortOption: SortOption = .nameAsc // Track current sort option
+    @Published var currentSortOption: SortOption = .nameAsc
     private let apiClient = RecipeAPIClient()
 
     func fetchRecipes() async {
@@ -18,7 +26,7 @@ class RecipeViewModel: ObservableObject {
             let fetchedRecipes = try await apiClient.fetchRecipes()
             recipes = fetchedRecipes
             filteredRecipes = fetchedRecipes
-            sortRecipes(by: currentSortOption) // Default or previous sort
+            sortRecipes(by: currentSortOption)
         } catch {
             errorMessage = IdentifiableString(value: "Failed to load recipes. Please try again.")
         }
@@ -33,7 +41,7 @@ class RecipeViewModel: ObservableObject {
     }
 
     func sortRecipes(by option: SortOption) {
-        currentSortOption = option // Update current sort option
+        currentSortOption = option
         switch option {
         case .nameAsc:
             filteredRecipes.sort { $0.name < $1.name }

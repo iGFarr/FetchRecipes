@@ -24,7 +24,7 @@ struct RecipeListView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
-                        isSortScreenPresented = true // Show the sort screen
+                        isSortScreenPresented = true
                     }) {
                         Image(systemName: "arrow.up.arrow.down.circle")
                     }
@@ -33,15 +33,15 @@ struct RecipeListView: View {
                     if isSearchBarVisible {
                         TextField("Search recipes", text: $searchText)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .focused($isSearchFieldFocused) // Bind focus state
+                            .focused($isSearchFieldFocused)
                             .onChange(of: searchText) { _, newValue in
                                 viewModel.filterRecipes(by: newValue)
                             }
                             .onSubmit {
                                 isSearchBarVisible = false
                             }
-                            .frame(maxWidth: .infinity) // Take up maximum space
-                            .padding(.horizontal, 8) // Add padding
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 8)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -49,7 +49,7 @@ struct RecipeListView: View {
                         withAnimation {
                             isSearchBarVisible.toggle()
                             if isSearchBarVisible {
-                                isSearchFieldFocused = true // Focus on the text field
+                                isSearchFieldFocused = true
                             } else {
                                 searchText = ""
                                 viewModel.filterRecipes(by: searchText)

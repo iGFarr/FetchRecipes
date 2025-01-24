@@ -1,3 +1,10 @@
+//
+//  RecipeDetailView.swift
+//  FetchRecipes
+//
+//  Created by Isaac Farr on 1/23/25.
+//
+
 import SwiftUI
 import WebKit
 
@@ -32,7 +39,7 @@ struct RecipeDetailView: View {
                 // YouTube Video Embed
                 if let youtubeURL = recipe.youtubeURL {
                     YouTubeWebView(youtubeURL: youtubeURL)
-                        .frame(height: 200)
+                        .frame(height: 240)
                         .cornerRadius(8)
                 }
 
@@ -50,7 +57,6 @@ struct RecipeDetailView: View {
     }
 }
 
-// WebView for YouTube
 struct YouTubeWebView: UIViewRepresentable {
     let youtubeURL: URL
 

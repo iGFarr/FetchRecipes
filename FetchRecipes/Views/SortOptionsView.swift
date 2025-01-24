@@ -1,3 +1,11 @@
+//
+//  SortOptionsView.swift
+//  FetchRecipes
+//
+//  Created by Isaac Farr on 1/23/25.
+//
+
+
 import SwiftUI
 
 enum SortOption: String, CaseIterable {
@@ -13,7 +21,7 @@ struct SortOptionsView: View {
     var onSortSelected: (SortOption) -> Void
 
     init(currentSortOption: SortOption, onSortSelected: @escaping (SortOption) -> Void) {
-        self._selectedSortOption = State(initialValue: currentSortOption) // Initialize with the current sort option
+        self._selectedSortOption = State(initialValue: currentSortOption)
         self.onSortSelected = onSortSelected
     }
 
