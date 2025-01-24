@@ -8,22 +8,24 @@
 import UIKit
 
 class ImageCache {
-    private let cacheDirectory: URL
+    private var memoryCache: [String: UIImage] = [:]
 
-    init() {
-        let paths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        cacheDirectory = paths[0]
-    }
 
     func loadImage(for url: URL) async throws -> UIImage? {
-        let cachePath = cacheDirectory.appendingPathComponent(url.lastPathComponent)
+        let cacheKey = url.absoluteString
 
-        if FileManager.default.fileExists(atPath: cachePath.path) {
-            return UIImage(contentsOfFile: cachePath.path)
+        // Check in-memory cache first
+        if let cachedImage = memoryCache[cacheKey] {
+            return cachedImage
         }
 
+
+        // Download the image and cache it
         let (data, _) = try await URLSession.shared.data(from: url)
-        try data.write(to: cachePath)
-        return UIImage(data: data)
+        let image = UIImage(data: data)
+        if let image = image {
+            memoryCache[cacheKey] = image // Save to memory
+        }
+        return image
     }
 }

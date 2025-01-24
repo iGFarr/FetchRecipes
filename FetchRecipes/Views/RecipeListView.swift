@@ -13,7 +13,6 @@ struct RecipeListView: View {
     @State private var isSearchBarVisible = false
     @State private var isSortScreenPresented = false
     @FocusState private var isSearchFieldFocused: Bool
-    private let imageCache = ImageCache()
 
     var body: some View {
         NavigationView {
