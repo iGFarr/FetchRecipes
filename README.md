@@ -1,4 +1,8 @@
-### Summary: Include screen shots or a video of your app highlighting its features
+### Summary:
+<p float="left">
+  <img src="images/TakeHomeSS1" width="400" />
+  <img src="AppDemoGIF2V2.gif" width="400" /> 
+</p>
 
 ### Focus Areas: What specific areas of the project did you prioritize? Why did you choose to focus on these areas?
 
